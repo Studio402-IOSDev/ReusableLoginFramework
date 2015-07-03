@@ -8,44 +8,50 @@
 
 #import "LoginPage.h"
 
-@implementation LoginPage
+@interface LoginPage()
 
-NSString *userspath;
-NSString *configpath;
-NSString *loginPostUrl;
-NSString *signupPostUrl;
-NSString *pswforgetPostUrl;
-NSNumber *timeOut;
-NSString *loginFormat;
-NSString *signupFormat;
-NSString *pswfogetFormat;
-NSMutableDictionary *users;
-NSDictionary *config;
+{
+    NSString *userspath;
+    NSString *configpath;
+    NSString *loginPostUrl;
+    NSString *signupPostUrl;
+    NSString *pswforgetPostUrl;
+    NSNumber *timeOut;
+    NSString *loginFormat;
+    NSString *signupFormat;
+    NSString *pswfogetFormat;
+    NSMutableDictionary *users;
+    NSDictionary *config;
+}
+
+@end
+
+@implementation LoginPage
 
 #pragma mark - Lifecycle
 - (instancetype) init{
     self = [super init];
     if(self){
-        NSBundle *bundle = [NSBundle mainBundle];
-        userspath = [bundle pathForResource:@"loginuser" ofType:@"plist"];
-        configpath = [bundle pathForResource:@"loginconfig" ofType:@"plist"];
-        users = [[NSMutableDictionary alloc]initWithContentsOfFile:userspath];
-        config = [[NSDictionary alloc]initWithContentsOfFile:configpath];
-        self.username = config[@"current"];
-        self.password = users[self.username];
-        NSNumber *num = config[@"rememberusername"];
+        NSBundle *bundle      = [NSBundle mainBundle];
+        userspath             = [bundle pathForResource:@"loginuser" ofType:@"plist"];
+        configpath            = [bundle pathForResource:@"loginconfig" ofType:@"plist"];
+        users                 = [[NSMutableDictionary alloc]initWithContentsOfFile:userspath];
+        config                = [[NSDictionary alloc]initWithContentsOfFile:configpath];
+        self.username         = config[@"current"];
+        self.password         = users[self.username];
+        NSNumber *num         = config[@"rememberusername"];
         self.rememberUsername = [num boolValue];
-        num = config[@"rememberpassword"];
+        num                   = config[@"rememberpassword"];
         self.rememberPassword = [num boolValue];
-        num = config[@"autologin"];
-        self.autoLogin = [num boolValue];
-        loginPostUrl = config[@"loginpost"];
-        signupPostUrl = config[@"signuppost"];
-        pswforgetPostUrl = config[@"pswforgetpost"];
-        loginFormat = config[@"loginformat"];
-        signupFormat = config[@"signupformat"];
-        pswfogetFormat = config[@"pswforgetformat"];
-        timeOut = config[@"timeout"];
+        num                   = config[@"autologin"];
+        self.autoLogin        = [num boolValue];
+        loginPostUrl          = config[@"loginpost"];
+        signupPostUrl         = config[@"signuppost"];
+        pswforgetPostUrl      = config[@"pswforgetpost"];
+        loginFormat           = config[@"loginformat"];
+        signupFormat          = config[@"signupformat"];
+        pswfogetFormat        = config[@"pswforgetformat"];
+        timeOut               = config[@"timeout"];
         if (self.autoLogin && ![self.username  isEqual: @""] && ![self.password isEqual:@""] && self.username != nil && self.password != nil)
             [self loginWithUsername:self.username andPassword:self.password];
     }
@@ -117,15 +123,15 @@ NSDictionary *config;
 }
 
 - (void)PostwithUrl:(NSString*)postUrl Format:(NSString*)format andParams:(NSArray*)params{
-    NSURL* URL=[NSURL URLWithString:postUrl];
-    NSMutableURLRequest* request=[NSMutableURLRequest requestWithURL:URL];
-    request.timeoutInterval = [timeOut floatValue];
-    request.HTTPMethod = @"POST";
-    NSString* param=[NSString stringWithFormat:format,params];
-    request.HTTPBody=[param dataUsingEncoding:NSUTF8StringEncoding];
+    NSURL *URL                   = [NSURL URLWithString:postUrl];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    request.timeoutInterval      = [timeOut floatValue];
+    request.HTTPMethod           = @"POST";
+    NSString *param              = [NSString stringWithFormat:format,params];
+    request.HTTPBody             = [param dataUsingEncoding:NSUTF8StringEncoding];
     [request setValue:@"ios" forHTTPHeaderField:@"User-Agent"];
-    NSError *error = [[NSError alloc] init];
-    _responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
+    NSError *error               = [[NSError alloc] init];
+    _responseData                = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
 }
 
 @end
